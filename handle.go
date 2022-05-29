@@ -8,15 +8,17 @@ import (
 	"net/http"
 	"net/http/httputil"
 
+	"github.com/hsmtkk/curly-waddle/trans"
 	"github.com/labstack/echo/v4"
 )
 
 type handler struct {
 	chanAccessToken string
+	translator      trans.Translator
 }
 
-func newHandler(chanAccessToken string) *handler {
-	return &handler{chanAccessToken}
+func newHandler(chanAccessToken string, translator trans.Translator) *handler {
+	return &handler{chanAccessToken, translator}
 }
 
 func (h *handler) Handle(ctx echo.Context) error {
@@ -25,7 +27,15 @@ func (h *handler) Handle(ctx echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 	log.Print(req)
-	h.Reply(req.Events[0].ReplyToken, req.Events[0].Message.Text)
+
+	replyToken := req.Events[0].ReplyToken
+	japanese := req.Events[0].Message.Text
+	english, err := h.translator.Translate(japanese)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+	}
+
+	h.Reply(replyToken, english)
 	return ctx.JSON(http.StatusOK, nil)
 }
 

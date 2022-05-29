@@ -6,6 +6,7 @@ import (
 	"os"
 	"strconv"
 
+	"github.com/hsmtkk/curly-waddle/trans"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )
@@ -19,7 +20,7 @@ func main() {
 
 	chanAccessToken := mustEnvVar("CHANNEL_ACCESS_TOKEN")
 
-	hdl := newHandler(chanAccessToken)
+	hdl := newHandler(chanAccessToken, trans.New())
 
 	// Echo instance
 	e := echo.New()
