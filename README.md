@@ -1,2 +1,2 @@
-# curly-waddle
-LINE bot Deepl translation Heroku
+# laughing-spork
+AWS Lambda echo
